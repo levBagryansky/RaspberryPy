@@ -1,8 +1,18 @@
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import time
 
-#GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BCM)
 leds = [24, 25, 8, 7, 12, 16, 20, 21]
+dac = [26, 19, 13, 6, 5, 11, 9, 10]
+
+GPIO.setup (dac[0], GPIO.OUT)
+GPIO.setup (dac[1], GPIO.OUT)
+GPIO.setup (dac[2], GPIO.OUT)
+GPIO.setup (dac[3], GPIO.OUT)
+GPIO.setup (dac[4], GPIO.OUT)
+GPIO.setup (dac[5], GPIO.OUT)
+GPIO.setup (dac[6], GPIO.OUT)
+GPIO.setup (dac[7], GPIO.OUT)
 
 def lightUp(ledNumber, period):
     n = leds[ledNumber]
@@ -14,14 +24,14 @@ def lightUp(ledNumber, period):
 
 #lightUp(6,0)
 
-
+#GPIO.cleanup()
 
 def blink(ledNumber, blinkCount, blinkPeriod):
     for i in range (0, blinkCount):
         lightUp(ledNumber, blinkPeriod)
         time.sleep(blinkPeriod)
         
-#blink(5, 1, 1)
+#blink(5, 5, 1)
 
 
 def runningLight(count, period):
@@ -56,7 +66,7 @@ def runningDark(count, period):
         for j in range(0, 8):
             lightDark(j, period)
 
-#runningDark(2, 1)
+#runningDark(1, 1)
 
 def decToBinList(n):
     n = bin(n)
@@ -68,7 +78,7 @@ def decToBinList(n):
         res[i] = arr[i -6 + leng]
     print(res)
     return res
-arr = decToBinList(254)
+#arr = decToBinList(254)
 
 
 def shift(lst, steps):
@@ -79,21 +89,42 @@ def shift(lst, steps):
     else:
         for i in range(steps):
             lst.insert(0, lst.pop())
-shift(arr, 1)
-print(arr)
+#shift(arr, 1)
+#print(arr)
 
-arr = decToBinList(254)
+#arr = decToBinList(214)
+
+
+
+
+
 def lightNumber(arr):
-    #arr = decToBinList(pattern);
+    
     for i in range(0, 8):
-        if(arr[i] == 1):
+        if(arr[i] == '1'):
+            GPIO.setup(leds[7-i], GPIO.OUT)
+            GPIO.output(leds[7-i], 1)
+
+    #GPIO.output(n, 0)
+    time.sleep(1)
+    #GPIO.output(n, 0)
+    for i in range(0, 8):
+        if(True):
             GPIO.setup(leds[i], GPIO.OUT)
             GPIO.output(leds[i], 1)
-    #GPIO.output(n, 0)
-    time.sleep(2)
-    GPIO.output(n, 0)
-    GPIO.output(leds, 0)
 
+    GPIO.output(leds[1], 0)
+    GPIO.output(leds[2], 0)
+    GPIO.output(leds[3], 0)
+    GPIO.output(leds[4], 0)
+    GPIO.output(leds[5], 0)
+    GPIO.output(leds[6], 0)
+    GPIO.output(leds[7], 0)
+    GPIO.output(leds[0], 0)
+    
+
+#arr = decToBinList(255)
+#lightNumber(arr)
 
 def runningPattern(pattern, direcrion):
     i = 0
@@ -105,8 +136,37 @@ def runningPattern(pattern, direcrion):
         shift(arr, k)
         lightNumber(arr)
 
+#runningPattern(3, "left")
 
-#def runningPattern(pattern, direction):
-    
-#GPIO.output(leds, 0)
-#GPIO.cleanup()
+leds = dac
+
+def num2dac(value):
+    #value = 255
+    arr1 = decToBinList(value)
+    print(arr1)
+    n = 0
+    for byte in arr1:
+        GPIO.output (dac[n], int(byte))
+        n+=1
+    time.sleep(1)
+
+#num2dac(255)
+
+
+
+#arr = decToBinList(3)
+def script1():
+    while(True):
+        print("Введите число:")
+        x = int(input())
+        if(x == -1):
+            print("Выхожу..")
+            break
+        else:
+            num2dac(x)
+script1()
+
+def script2(n):
+    for
+
+GPIO.cleanup()
