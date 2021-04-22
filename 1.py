@@ -76,7 +76,7 @@ def decToBinList(n):
     leng = leng - 2
     for i in range(8 - leng, 8):
         res[i] = arr[i -6 + leng]
-    print(res)
+    #print(res)
     return res
 #arr = decToBinList(254)
 
@@ -143,12 +143,12 @@ leds = dac
 def num2dac(value):
     #value = 255
     arr1 = decToBinList(value)
-    print(arr1)
+    #print(arr1)
     n = 0
     for byte in arr1:
         GPIO.output (dac[n], int(byte))
         n+=1
-    time.sleep(1)
+    time.sleep(0.001)
 
 #num2dac(255)
 
@@ -164,9 +164,106 @@ def script1():
             break
         else:
             num2dac(x)
-script1()
+#script1()
 
-def script2(n):
-    for
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(dac, GPIO.OUT)
+GPIO.setup(4, GPIO.IN )
+GPIO.setup(17, GPIO.OUT)
+GPIO.output(17,1)
+GPIO.output(dac,0)
+GPIO.setwarnings(False)
 
+def HandMade():
+    while True:
+        a = int(input())
+        if (a < 0):
+            print("exit")
+            break
+        if (a > 255):
+            print("exit")
+            break    
+        comp = int(GPIO.input(4))
+        num2dac(a)
+        print("Comparator", comp)
+        print(a, " = ",a / 256 * 3.3, "V")
+
+num2dac(200)
+#print(GPIO.input(4))
+#HandMade()
+
+def binarySearch():
+    i = 128
+    comp = GPIO.input(4)
+    if(comp == 1): #[0; 128]
+        i = 64
+        num2dac(i)
+        comp = GPIO.input(4)
+        if(comp == 1): #[0, 64]
+            i = 32
+            num2dac(i)
+            if(GPIO.input(4) == 1):#[0, 32]
+                i = 0
+                num2dac(i)
+                while(int(GPIO.input(4)) == 0):
+                    i += 1
+                    num2dac(i)
+            else: #[32, 64]
+                i = 32
+                num2dac(i)
+                while(int(GPIO.input(4)) == 0):
+                    i += 1
+                    num2dac(i)
+        else: #[64, 128]
+            i = 96
+            num2dac(i)
+            if(GPIO.input(4) == 1): #[64, 96]
+                i = 64
+                num2dac(i)
+                while(int(GPIO.input(4)) == 0):
+                    i += 1
+                    num2dac(i)
+            else: #96, 128
+                i = 96
+                num2dac(i)
+                while(int(GPIO.input(4)) == 0):
+                    i += 1
+                    num2dac(i)
+    else: #[128, 256]
+        i = 192
+        num2dac(i)
+        if(GPIO.input(4) == 1): # 128, 192
+            i = 160
+            num2dac(i)
+            while(int(GPIO.input(4)) == 0):
+                    i += 1
+                    num2dac(i)
+            
+
+def binarySearch1(left, right):
+    i = (left + right)/2
+    if (right - left <= 4):
+        i = int(left) - 25
+        if(i < 0):
+            i = 0
+        num2dac(i)
+        while(int(GPIO.input(4)) == 0):
+            i += 1
+            num2dac(i)
+        print(i)
+        return i
+    num2dac(int(i))
+    comp = int(GPIO.input(4))
+    if(comp == 0):
+        binarySearch1(left, (right + left) / 2)
+    else:
+        binarySearch1((right + left) / 2, right)
+
+def Simplest():
+    while True:
+        i = binarySearch1(0, 255)
+        print("Digital value: ", i, "Real: ", 0)
+        
+
+Simplest()
 GPIO.cleanup()
